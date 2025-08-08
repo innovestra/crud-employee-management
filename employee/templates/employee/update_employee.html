@@ -1,0 +1,70 @@
+{% extends "employee/base.html" %} {% load static %}
+{% block title %}Update Employee{% endblock %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+<h2>Update Employee</h2>
+<form method="post" class="form-group p-4 card" style="max-width: 500px; margin: auto;" id="employeeForm">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="button" class="btn mb-3 btn-primary" data-bs-toggle="modal" data-bs-target="#confirmUpdateModal">Update</button>
+    <a href="{% url 'list' %}" class="btn mb-2 btn-secondary">Cancel</a>
+</form>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmUpdateModal" tabindex="-1" role="dialog" aria-labelledby="confirmUpdateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border-radius: 10px;">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="confirmUpdateModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Confirm Update
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">Are you sure you want to update this employee's information?</p>
+                <small class="text-muted">This action will modify the employee record permanently.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-success" id="confirmUpdateBtn">
+                    <i class="fas fa-check me-1"></i>Yes, Update
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmUpdateBtn = document.getElementById('confirmUpdateBtn');
+    const employeeForm = document.getElementById('employeeForm');
+    const modal = document.getElementById('confirmUpdateModal');
+    
+    // Handle confirmation button click
+    confirmUpdateBtn.addEventListener('click', function() {
+        // Close the modal
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        modalInstance.hide();
+        
+        // Submit the form
+        employeeForm.submit();
+    });
+    
+    // Optional: Add form validation before showing modal
+    const updateButton = document.querySelector('[data-bs-target="#confirmUpdateModal"]');
+    updateButton.addEventListener('click', function(e) {
+        // Basic form validation
+        const form = document.getElementById('employeeForm');
+        if (!form.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+            form.classList.add('was-validated');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock content %}
